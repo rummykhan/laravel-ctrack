@@ -59,7 +59,7 @@
 
 @section('scripts')
 	<script type="text/javascript">
-        
+
         var PrimaryCollections = $('#primary-list').children();
         var ForeignCollections = $('#foreign-list').children();
 
