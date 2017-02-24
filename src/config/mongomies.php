@@ -11,7 +11,8 @@ return [
     |
     */
     'routes' => [
-        'index'             => '/admin/mongomies',
-        'relational'        => '/admin/mongomies/relational',
+        'index'                 => '/admin/mongomies',
+        'relational'            => '/admin/mongomies/relational',
+        'relational-analysis'   => '/admin/mongomies/relational/analysis',
     ],
 ];
