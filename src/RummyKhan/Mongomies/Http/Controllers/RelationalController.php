@@ -56,25 +56,25 @@ class RelationalController extends CoreController
 
     private function analyzeOneToOneRelation($primaryCollection, $primaryKey, $foriengCollection, $foreignKey){
         $stats = [
-            'primary' => $this->_getStats($primaryCollection),
-            'foreign' => $this->_getStats($foriengCollection)
+            'primary' => $this->_getStats( $primaryCollection ),
+            'foreign' => $this->_getStats( $foriengCollection )
         ];
 
+        $primaryKeys = DB::collection($primaryCollection)->where([$primaryKey => ['$ne' => null]])->pluck($primaryKey);
+
+        // Check how many has no primary key.
+        // Check how many has duplicate primary key.
         $errors = [
             'primary' => [
-                'no-primary-key' => $this->_getWithNoKey($primaryCollection, $primaryKey),
-                'duplicate-primary-key' => $this->_getDuplicatePrimaryKey($primaryCollection, $primaryKey)
+                'no-key' => $this->_getWithNoKey($primaryCollection, $primaryKey),
+                'duplicate-key' => $this->_getDuplicatePrimaryKey($primaryCollection, $primaryKey),
             ],
             'foreign' => [
-                'no-foreign-key' => $this->_getWithNoKey($foriengCollection, $foreignKey),
-                'duplicate-foreign-key' => $this->_getDuplicatePrimaryKey($foriengCollection, $foreignKey)
+                'no-key' => $this->_getWithNoKey( $foriengCollection, $foreignKey ),
+                'duplicate-key' => $this->_getDuplicatePrimaryKey( $foriengCollection, $foreignKey ),
+                'naked' => DB::collection($foriengCollection)->whereNotIn($foreignKey, $primaryKeys)->get()
             ]
         ];
-        // check how many has no primary key..
-        // check how many has duplicate primary key..
-
-        $primaryRecords = $this->_getRecords($primaryCollection, $primaryKey);
-
 
         $warnings = [];
 

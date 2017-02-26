@@ -41,7 +41,10 @@ class CoreController extends Controller
     }
 
     protected function _getWithNoKey($collection, $primaryKey){
-        $cursor = DB::collection($collection)->where([$primaryKey => ['$exists' => false]])->get();
+        $cursor = DB::collection($collection)
+            ->where([$primaryKey => ['$exists' => false]])
+            ->orWhere([ $primaryKey => null ])
+            ->get();
         $records = [];
 
         foreach ($cursor as $record){
@@ -73,12 +76,5 @@ class CoreController extends Controller
         return $records;
     }
 
-    protected function _getRecords($collection){
-        $cursor = DB::collection($collection)->get();
-        $records = [];
-        foreach ($cursor as $record){
-            $records[] = $record;
-        }
-        return $records;
-    }
+
 }
