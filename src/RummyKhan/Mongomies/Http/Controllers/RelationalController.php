@@ -51,7 +51,7 @@ class RelationalController extends CoreController
             return $this->analyzeOneToOneRelation($primaryCollection, $primaryKey, $foriengCollection, $foreignKey);
         }
 
-        return $this->_sendResponse('Got it', 200, $request->all());
+        return $this->analyzeManyToManyRelation($primaryCollection, $primaryKey, $foriengCollection, $foreignKey);
     }
 
     private function analyzeOneToOneRelation($primaryCollection, $primaryKey, $foriengCollection, $foreignKey){
@@ -67,7 +67,7 @@ class RelationalController extends CoreController
         $errors = [
             'primary' => [
                 'no-key' => $this->_getWithNoKey($primaryCollection, $primaryKey),
-                'duplicate-key' => $this->_getDuplicatePrimaryKey($primaryCollection, $primaryKey),
+                'duplicate-key' => $this->_getDuplicatePrimaryKey($primaryCollection, $primaryKey)
             ],
             'foreign' => [
                 'no-key' => $this->_getWithNoKey( $foriengCollection, $foreignKey ),
@@ -78,7 +78,34 @@ class RelationalController extends CoreController
 
         $warnings = [];
 
-        return ['stats' => $stats, 'errors' => $errors];
+        return ['stats' => $stats, 'errors' => $errors, 'warnings' => $warnings];
+    }
+
+    private function analyzeManyToManyRelation($primaryCollection, $primaryKey, $foriengCollection, $foreignKey){
+        $stats = [
+            'primary' => $this->_getStats( $primaryCollection ),
+            'foreign' => $this->_getStats( $foriengCollection )
+        ];
+
+        $primaryKeys = DB::collection($primaryCollection)->where([$primaryKey => ['$ne' => null]])->pluck($primaryKey);
+
+        // Check how many has no primary key.
+        // Check how many has duplicate primary key.
+        $errors = [
+            'primary' => [
+                'no-key' => $this->_getWithNoKey($primaryCollection, $primaryKey),
+                'duplicate-key' => $this->_getDuplicatePrimaryKey($primaryCollection, $primaryKey)
+            ],
+            'foreign' => [
+                'no-key' => $this->_getWithNoKey( $foriengCollection, $foreignKey ),
+                'duplicate-key' => $this->_getDuplicatePrimaryKey( $foriengCollection, $foreignKey ),
+                'naked' => DB::collection($foriengCollection)->whereNotIn($foreignKey, $primaryKeys)->get()
+            ]
+        ];
+
+        $warnings = [];
+
+        return ['stats' => $stats, 'errors' => $errors, 'warnings' => $warnings];
     }
 
 

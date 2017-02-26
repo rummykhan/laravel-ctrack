@@ -100,6 +100,21 @@
         </div>
     </div>
 
+    <div class="columns is-hidden" id="stats-detail">
+        <div class="column is-6" id="primary-stats">
+        </div>
+        <div class="column is-6" id="foreign-stats">
+        </div>
+    </div>
+
+    <div class="columns is-hidden" id="stats-errors">
+        <div class="column is-6" id="primary-errors">
+
+        </div>
+        <div class="column is-6" id="foreign-errors">
+        </div>
+    </div>
+
     <div class="columns">
 
         <div class="column is-6">
@@ -157,7 +172,7 @@
 @section('scripts')
     <script type="text/javascript">
         $.ajaxSetup({
-            headers: { 'X-CSRF-TOKEN': $('meta[name="token"]').attr('content') }
+            headers: {'X-CSRF-TOKEN': $('meta[name="token"]').attr('content')}
         });
 
         var PrimaryCollectionsContainer = $('#primary-collections');
@@ -184,6 +199,14 @@
         var ErrorMessageContainer = $('#error-message-container');
         var ErrorMessageText = $('#error-message-text');
 
+        var StatsDetail = $('#stats-detail');
+        var PrimaryStats = $('#primary-stats');
+        var ForeignStats = $('#foreign-stats');
+
+        var StatsErrors = $('#stats-errors');
+        var PrimaryErrors = $('#primary-errors');
+        var ForeignErrors = $('#foreign-errors');
+
         var PrimaryCollections = PrimaryCollectionsContainer.children();
         var ForeignCollections = ForeignCollectionsContainer.children();
 
@@ -206,7 +229,7 @@
 
         StartAnalysisBtn.click(startAnalysis);
 
-        function startAnalysis(){
+        function startAnalysis() {
 
             var _primaryKey = PrimaryKeyInputBox.val();
             var _foreignKey = ForeignKeyInputBox.val();
@@ -228,14 +251,15 @@
                     primaryCollection: _primaryCollection,
                     foreignCollection: _foreignCollection
                 },
-                beforeSend: function(){
+                beforeSend: function () {
                     hideErrorMessage();
                     showLoader();
                 },
-                success: function(){
-
+                success: function (response) {
+                    displayStats(response.stats);
+                    displayErrors(response.errors);
                 },
-                error: function(xhr){
+                error: function (xhr) {
                     var error = JSON.parse(xhr.responseText);
                     displayErrorMessage(error.message);
                 },
@@ -245,26 +269,98 @@
             });
         }
 
-        function displayErrorMessage( message ){
+        function displayStats(stats){
+            unHideStatsDetail();
+            displayPrimaryStats(stats.primary[0]);
+            displayForeignStats(stats.foreign[0]);
+        }
+
+        function displayErrors(erros){
+            unHideStatsErrors();
+            emptyPrimaryErrors();
+            emptyForeignErrors();
+
+            displayPrimaryErrors(errors.primary);
+            displayForeignErrors(errors.foreign);
+        }
+
+        function displayPrimaryErrors(errors){
+            var _noKey = errors['no-key'];
+            var _duplicateKey = errors['duplicate-key'];
+        }
+
+        function emptyPrimaryErrors(){
+            PrimaryErrors.text('');
+        }
+
+        function displayForeignErrors(errors){
+            var _noKey = errors['no-key'];
+            var _duplicateKey = errors['duplicate-key'];
+            var _naked = errors['naked'];
+        }
+
+        function emptyForeignErrors(){
+            ForeignErrors.text('');
+        }
+
+        function hideStatsErrors(){
+            if( !StatsErrors.hasClass('is-hidden') ){
+                StatsErrors.addClass('is-hidden');
+            }
+        }
+
+        function unHideStatsErrors() {
+            StatsErrors.removeClass('is-hidden');
+        }
+
+
+
+        function hideStatsDetail(){
+            if( !StatsDetail.hasClass('is-hidden') ){
+                StatsDetail.addClass('is-hidden');
+            }
+        }
+
+        function unHideStatsDetail() {
+            StatsDetail.removeClass('is-hidden');
+        }
+
+        function emptyPrimaryStats(){
+            PrimaryStats.text('');
+        }
+
+        function emptyForeignStats(){
+            ForeignStats.text('');
+        }
+
+        function displayPrimaryStats(stats){
+            PrimaryStats.JSONView(stats);
+        }
+
+        function displayForeignStats(stats) {
+            ForeignStats.JSONView(stats);
+        }
+
+        function displayErrorMessage(message) {
             ErrorMessageContainer.removeClass('is-hidden');
             ErrorMessageText.text(message);
         }
 
-        function hideErrorMessage(  ){
-            if( !ErrorMessageContainer.hasClass('is-hidden') )
+        function hideErrorMessage() {
+            if (!ErrorMessageContainer.hasClass('is-hidden'))
                 ErrorMessageContainer.addClass('is-hidden');
         }
 
-        function showLoader(){
+        function showLoader() {
             Loader.removeClass('is-hidden');
         }
 
-        function hideLoader(){
-            if( !Loader.hasClass('is-hidden') )
+        function hideLoader() {
+            if (!Loader.hasClass('is-hidden'))
                 Loader.addClass('is-hidden');
         }
 
-        function isReadyForAnalysis(){
+        function isReadyForAnalysis() {
             var _primaryKey = PrimaryKeyInputBox.val();
             var _foreignKey = ForeignKeyInputBox.val();
             var _primaryRelation = PrimaryRelationSelect.find('option:selected').attr('value');
@@ -272,52 +368,52 @@
 
             hideAnalysisBtn();
 
-            if( _primaryKey.trim() === '' ){
+            if (_primaryKey.trim() === '') {
                 return true;
             }
 
-            if( _foreignKey.trim() === '' ){
+            if (_foreignKey.trim() === '') {
                 return true;
             }
 
-            if( _primaryRelation === undefined ){
+            if (_primaryRelation === undefined) {
                 return true;
             }
 
-            if( _foreignRelation === undefined ){
+            if (_foreignRelation === undefined) {
                 return true;
             }
 
-            if( _primaryRelation.trim() === '' ){
+            if (_primaryRelation.trim() === '') {
                 return true;
             }
 
-            if( _foreignRelation.trim() === '' ){
+            if (_foreignRelation.trim() === '') {
                 return true;
             }
 
             unHideAnalysisBtn();
         }
 
-        function hideAnalysisBtn(){
-            if( !StartAnalysisBtnContainer.hasClass('is-hidden') )
+        function hideAnalysisBtn() {
+            if (!StartAnalysisBtnContainer.hasClass('is-hidden'))
                 StartAnalysisBtnContainer.addClass('is-hidden');
 
             hideErrorMessage();
         }
 
-        function unHideAnalysisBtn(){
+        function unHideAnalysisBtn() {
             StartAnalysisBtnContainer.removeClass('is-hidden');
         }
 
-        function inputBoxChange(){
+        function inputBoxChange() {
             var _this = $(this);
             var _value = _this.val();
             var _icon = getIcon(_this);
 
             hideAnalysisBtn();
 
-            if( _value.trim() === '' ){
+            if (_value.trim() === '') {
                 _this.removeClass('is-success');
                 _icon.addClass('is-hidden');
                 return true;
@@ -329,8 +425,8 @@
             isReadyForAnalysis();
         }
 
-        function getIcon(source){
-            return $('#'+source.data().icon);
+        function getIcon(source) {
+            return $('#' + source.data().icon);
         }
 
         function collectionSelected(e) {
@@ -350,37 +446,37 @@
             // get columns and add to target container..
         }
 
-        function clearCollectionsSearch(e){
+        function clearCollectionsSearch(e) {
             e.preventDefault();
             var _this = $(this);
             unHideChildren(getCollectionsContainer(_this));
             clearInput(getCollectionNameInput(_this));
         }
 
-        function getCollectionNameInput(anchor){
-            return $('#'+anchor.data().input);
+        function getCollectionNameInput(anchor) {
+            return $('#' + anchor.data().input);
         }
 
-        function clearInput(input){
+        function clearInput(input) {
             input.val('');
         }
 
-        function getNameContainer(anchor){
+        function getNameContainer(anchor) {
             var _targetName = anchor.data().target;
-            return $('#' + _targetName + '-name-container' );
+            return $('#' + _targetName + '-name-container');
         }
 
-        function getNameContainerAnchor(anchor){
+        function getNameContainerAnchor(anchor) {
             var _targetName = anchor.data().target;
-            return $('#' + _targetName + '-name' );
+            return $('#' + _targetName + '-name');
         }
 
-        function getPanel(anchor){
+        function getPanel(anchor) {
             var _targetName = anchor.data().target;
-            return $('#' + _targetName + '-panel' );
+            return $('#' + _targetName + '-panel');
         }
 
-        function getCollectionName(anchor){
+        function getCollectionName(anchor) {
             return anchor.data().collection;
         }
 
@@ -388,14 +484,14 @@
             var _this = $(this);
             var _input = $(this).val();
 
-            if ( _input.trim() === '' ) {
+            if (_input.trim() === '') {
                 clearSearch();
                 return true;
             }
 
             var _items = $('#' + _this.data().target).children();
 
-            $.each(_items, function ( index, value ) {
+            $.each(_items, function (index, value) {
                 if (!$(value).text().includes(_input)) {
                     $(value).addClass('is-hidden');
                 } else {
@@ -451,7 +547,7 @@
             });
         }
 
-        function removeCollection(e){
+        function removeCollection(e) {
             e.preventDefault();
             var _this = $(this);
             var _collectionContainer = getCollectionsContainer(_this);
@@ -461,14 +557,16 @@
             _collectionNamePanel.addClass('is-hidden');
 
             hideAnalysisBtn();
+            hideStatsDetail();
+            hideStatsErrors();
         }
 
-        function getCollectionsContainer(anchor){
-            return $('#'+anchor.data().target);
+        function getCollectionsContainer(anchor) {
+            return $('#' + anchor.data().target);
         }
 
-        function getCollectionNamePanel(anchor){
-            return $('#'+anchor.data().panel);
+        function getCollectionNamePanel(anchor) {
+            return $('#' + anchor.data().panel);
         }
 
     </script>
