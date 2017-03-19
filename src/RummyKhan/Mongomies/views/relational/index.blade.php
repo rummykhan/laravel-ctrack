@@ -244,7 +244,10 @@
                 'primaryKey=' + _primaryKey +
                 '&foreignKey=' + _foreignKey +
                 '&primaryCollection=' + _primaryCollection +
-                '&foreignCollection=' + _foreignCollection;
+                '&foreignCollection=' + _foreignCollection +
+                '&primaryRelation=' + _primaryRelation +
+                '&foreignRelation=' + _foreignRelation
+            ;
         }
 
         /* ============================================ */
