@@ -256,7 +256,7 @@
                     showLoader();
                 },
                 success: function (response) {
-                    displayStats(response.stats);
+                    //displayStats(response.stats);
                     displayErrors(response.errors);
                 },
                 error: function (xhr) {
@@ -269,56 +269,14 @@
             });
         }
 
+        /* ============================================ */
+
+        /* STATS Display Detail START */
+
         function displayStats(stats){
             unHideStatsDetail();
             displayPrimaryStats(stats.primary[0]);
             displayForeignStats(stats.foreign[0]);
-        }
-
-        function displayErrors(erros){
-            unHideStatsErrors();
-            emptyPrimaryErrors();
-            emptyForeignErrors();
-
-            displayPrimaryErrors(errors.primary);
-            displayForeignErrors(errors.foreign);
-        }
-
-        function displayPrimaryErrors(errors){
-            var _noKey = errors['no-key'];
-            var _duplicateKey = errors['duplicate-key'];
-        }
-
-        function emptyPrimaryErrors(){
-            PrimaryErrors.text('');
-        }
-
-        function displayForeignErrors(errors){
-            var _noKey = errors['no-key'];
-            var _duplicateKey = errors['duplicate-key'];
-            var _naked = errors['naked'];
-        }
-
-        function emptyForeignErrors(){
-            ForeignErrors.text('');
-        }
-
-        function hideStatsErrors(){
-            if( !StatsErrors.hasClass('is-hidden') ){
-                StatsErrors.addClass('is-hidden');
-            }
-        }
-
-        function unHideStatsErrors() {
-            StatsErrors.removeClass('is-hidden');
-        }
-
-
-
-        function hideStatsDetail(){
-            if( !StatsDetail.hasClass('is-hidden') ){
-                StatsDetail.addClass('is-hidden');
-            }
         }
 
         function unHideStatsDetail() {
@@ -341,15 +299,49 @@
             ForeignStats.JSONView(stats);
         }
 
-        function displayErrorMessage(message) {
-            ErrorMessageContainer.removeClass('is-hidden');
-            ErrorMessageText.text(message);
+        /* STATS Display Stats Detail END */
+
+        /* ============================================ */
+
+        /* STATS Errors Display / Hide START */
+
+        function displayErrors(errors){
+            unHideStatsErrors();
+            emptyPrimaryErrors();
+            emptyForeignErrors();
+
+            displayPrimaryErrors(errors.primary);
+            displayForeignErrors(errors.foreign);
         }
 
-        function hideErrorMessage() {
-            if (!ErrorMessageContainer.hasClass('is-hidden'))
-                ErrorMessageContainer.addClass('is-hidden');
+        function unHideStatsErrors() {
+            StatsErrors.removeClass('is-hidden');
         }
+
+        function emptyPrimaryErrors(){
+            PrimaryErrors.text('');
+        }
+
+        function emptyForeignErrors(){
+            ForeignErrors.text('');
+        }
+
+        function displayPrimaryErrors(errors){
+            var _noKey = errors['no-key'];
+            var _duplicateKey = errors['duplicate-key'];
+        }
+
+        function displayForeignErrors(errors){
+            var _noKey = errors['no-key'];
+            var _duplicateKey = errors['duplicate-key'];
+            var _naked = errors['naked'];
+        }
+
+        /* STATS Errors Display / Hide END */
+
+        /* ============================================ */
+
+        /* Loader Display / Hide END */
 
         function showLoader() {
             Loader.removeClass('is-hidden');
@@ -360,47 +352,25 @@
                 Loader.addClass('is-hidden');
         }
 
-        function isReadyForAnalysis() {
-            var _primaryKey = PrimaryKeyInputBox.val();
-            var _foreignKey = ForeignKeyInputBox.val();
-            var _primaryRelation = PrimaryRelationSelect.find('option:selected').attr('value');
-            var _foreignRelation = ForeignRelationSelect.find('option:selected').attr('value');
+        /* Loader Display / Hide END */
 
-            hideAnalysisBtn();
+        /* ============================================ */
 
-            if (_primaryKey.trim() === '') {
-                return true;
-            }
+        /* Error Message Display / Hide END */
 
-            if (_foreignKey.trim() === '') {
-                return true;
-            }
-
-            if (_primaryRelation === undefined) {
-                return true;
-            }
-
-            if (_foreignRelation === undefined) {
-                return true;
-            }
-
-            if (_primaryRelation.trim() === '') {
-                return true;
-            }
-
-            if (_foreignRelation.trim() === '') {
-                return true;
-            }
-
-            unHideAnalysisBtn();
+        function displayErrorMessage(message) {
+            ErrorMessageContainer.removeClass('is-hidden');
+            ErrorMessageText.text(message);
         }
 
-        function hideAnalysisBtn() {
-            if (!StartAnalysisBtnContainer.hasClass('is-hidden'))
-                StartAnalysisBtnContainer.addClass('is-hidden');
-
-            hideErrorMessage();
+        function hideErrorMessage() {
+            if (!ErrorMessageContainer.hasClass('is-hidden'))
+                ErrorMessageContainer.addClass('is-hidden');
         }
+
+        /* Error Message Display / Hide END */
+
+        /* ============================================ */
 
         function unHideAnalysisBtn() {
             StartAnalysisBtnContainer.removeClass('is-hidden');
@@ -446,61 +416,6 @@
             // get columns and add to target container..
         }
 
-        function clearCollectionsSearch(e) {
-            e.preventDefault();
-            var _this = $(this);
-            unHideChildren(getCollectionsContainer(_this));
-            clearInput(getCollectionNameInput(_this));
-        }
-
-        function getCollectionNameInput(anchor) {
-            return $('#' + anchor.data().input);
-        }
-
-        function clearInput(input) {
-            input.val('');
-        }
-
-        function getNameContainer(anchor) {
-            var _targetName = anchor.data().target;
-            return $('#' + _targetName + '-name-container');
-        }
-
-        function getNameContainerAnchor(anchor) {
-            var _targetName = anchor.data().target;
-            return $('#' + _targetName + '-name');
-        }
-
-        function getPanel(anchor) {
-            var _targetName = anchor.data().target;
-            return $('#' + _targetName + '-panel');
-        }
-
-        function getCollectionName(anchor) {
-            return anchor.data().collection;
-        }
-
-        function searchCollection() {
-            var _this = $(this);
-            var _input = $(this).val();
-
-            if (_input.trim() === '') {
-                clearSearch();
-                return true;
-            }
-
-            var _items = $('#' + _this.data().target).children();
-
-            $.each(_items, function (index, value) {
-                if (!$(value).text().includes(_input)) {
-                    $(value).addClass('is-hidden');
-                } else {
-                    if ($(value).hasClass('is-hidden')) $(value).removeClass('is-hidden');
-                }
-            });
-
-        }
-
         function hideChildren(parent) {
             $.each(parent.children(), function (item, value) {
                 $(value).addClass('is-hidden');
@@ -522,6 +437,10 @@
             unHidePrimaryListItems();
             unHideForeignListItems();
         }
+
+        /* ============================================ */
+
+        /* Hide List Items START */
 
         function unHidePrimaryListItems() {
             $.each(PrimaryCollections, function (index, value) {
@@ -547,6 +466,46 @@
             });
         }
 
+        /* Hide List Items END */
+
+        /* ============================================ */
+
+        /* Remove Selected Collection START */
+
+        function searchCollection() {
+            var _this = $(this);
+            var _input = $(this).val();
+
+            if (_input.trim() === '') {
+                clearSearch();
+                return true;
+            }
+
+            var _items = $('#' + _this.data().target).children();
+
+            $.each(_items, function (index, value) {
+                if (!$(value).text().includes(_input)) {
+                    $(value).addClass('is-hidden');
+                } else {
+                    if ($(value).hasClass('is-hidden')) $(value).removeClass('is-hidden');
+                }
+            });
+
+        }
+
+        function clearCollectionsSearch(e) {
+            e.preventDefault();
+            var _this = $(this);
+            unHideChildren(getCollectionsContainer(_this));
+            clearInput(getCollectionNameInput(_this));
+        }
+
+        /* Remove Selected Collection START */
+
+        /* ============================================ */
+
+        /* Remove Selected Collection START */
+
         function removeCollection(e) {
             e.preventDefault();
             var _this = $(this);
@@ -561,6 +520,31 @@
             hideStatsErrors();
         }
 
+        function hideAnalysisBtn() {
+            if (!StartAnalysisBtnContainer.hasClass('is-hidden'))
+                StartAnalysisBtnContainer.addClass('is-hidden');
+
+            hideErrorMessage();
+        }
+
+        function hideStatsDetail(){
+            if( !StatsDetail.hasClass('is-hidden') ){
+                StatsDetail.addClass('is-hidden');
+            }
+        }
+
+        function hideStatsErrors(){
+            if( !StatsErrors.hasClass('is-hidden') ){
+                StatsErrors.addClass('is-hidden');
+            }
+        }
+
+        /* Remove Selected Collection END */
+
+        /* ============================================ */
+
+        /* General Helpers START */
+
         function getCollectionsContainer(anchor) {
             return $('#' + anchor.data().target);
         }
@@ -568,6 +552,72 @@
         function getCollectionNamePanel(anchor) {
             return $('#' + anchor.data().panel);
         }
+
+        function getNameContainer(anchor) {
+            var _targetName = anchor.data().target;
+            return $('#' + _targetName + '-name-container');
+        }
+
+        function getNameContainerAnchor(anchor) {
+            var _targetName = anchor.data().target;
+            return $('#' + _targetName + '-name');
+        }
+
+        function getPanel(anchor) {
+            var _targetName = anchor.data().target;
+            return $('#' + _targetName + '-panel');
+        }
+
+        function getCollectionNameInput(anchor) {
+            return $('#' + anchor.data().input);
+        }
+
+        function isReadyForAnalysis() {
+            var _primaryKey = PrimaryKeyInputBox.val();
+            var _foreignKey = ForeignKeyInputBox.val();
+            var _primaryRelation = PrimaryRelationSelect.find('option:selected').attr('value');
+            var _foreignRelation = ForeignRelationSelect.find('option:selected').attr('value');
+
+            hideAnalysisBtn();
+
+            if (_primaryKey.trim() === '') {
+                return true;
+            }
+
+            if (_foreignKey.trim() === '') {
+                return true;
+            }
+
+            if (_primaryRelation === undefined) {
+                return true;
+            }
+
+            if (_foreignRelation === undefined) {
+                return true;
+            }
+
+            if (_primaryRelation.trim() === '') {
+                return true;
+            }
+
+            if (_foreignRelation.trim() === '') {
+                return true;
+            }
+
+            unHideAnalysisBtn();
+        }
+
+        function clearInput(input) {
+            input.val('');
+        }
+
+        function getCollectionName(anchor) {
+            return anchor.data().collection;
+        }
+
+        /* General Helpers END */
+
+        /* ============================================ */
 
     </script>
 @endsection

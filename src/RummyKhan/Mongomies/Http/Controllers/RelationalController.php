@@ -103,6 +103,8 @@ class RelationalController extends CoreController
             ]
         ];
 
+        // check if document have two same fields
+
         $warnings = [];
 
         return ['stats' => $stats, 'errors' => $errors, 'warnings' => $warnings];
