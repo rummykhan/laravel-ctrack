@@ -27,16 +27,18 @@
     </style>
 </head>
 
-<body class="container margin-top-10">
+<body class="margin-top-10">
 
 @include('mongomies::includes.nav-bar')
 
 <div class="content margin-top-40">
     <div class="columns">
+        <div class="column is-1">
+        </div>
         <div class="column is-2">
             @yield('sidebar')
         </div>
-        <div class="column is-10">
+        <div class="column is-8">
             @yield('content')
         </div>
     </div>

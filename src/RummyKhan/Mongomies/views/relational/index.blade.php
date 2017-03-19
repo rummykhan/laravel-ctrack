@@ -240,40 +240,18 @@
             var _primaryCollection = $('#primary-collections-name').text().trim();
             var _foreignCollection = $('#foreign-collections-name').text().trim();
 
-            $.ajax({
-                url: '/admin/mongomies/relational/analysis',
-                method: 'POST',
-                data: {
-                    primaryKey: _primaryKey,
-                    foreignKey: _foreignKey,
-                    primaryRelation: _primaryRelation,
-                    foreignRelation: _foreignRelation,
-                    primaryCollection: _primaryCollection,
-                    foreignCollection: _foreignCollection
-                },
-                beforeSend: function () {
-                    hideErrorMessage();
-                    showLoader();
-                },
-                success: function (response) {
-                    //displayStats(response.stats);
-                    displayErrors(response.errors);
-                },
-                error: function (xhr) {
-                    var error = JSON.parse(xhr.responseText);
-                    displayErrorMessage(error.message);
-                },
-                complete: function () {
-                    hideLoader();
-                }
-            });
+            window.location.href = '/admin/mongomies/relational/analysis?' +
+                'primaryKey=' + _primaryKey +
+                '&foreignKey=' + _foreignKey +
+                '&primaryCollection=' + _primaryCollection +
+                '&foreignCollection=' + _foreignCollection;
         }
 
         /* ============================================ */
 
         /* STATS Display Detail START */
 
-        function displayStats(stats){
+        function displayStats(stats) {
             unHideStatsDetail();
             displayPrimaryStats(stats.primary[0]);
             displayForeignStats(stats.foreign[0]);
@@ -283,15 +261,15 @@
             StatsDetail.removeClass('is-hidden');
         }
 
-        function emptyPrimaryStats(){
+        function emptyPrimaryStats() {
             PrimaryStats.text('');
         }
 
-        function emptyForeignStats(){
+        function emptyForeignStats() {
             ForeignStats.text('');
         }
 
-        function displayPrimaryStats(stats){
+        function displayPrimaryStats(stats) {
             PrimaryStats.JSONView(stats);
         }
 
@@ -305,10 +283,10 @@
 
         /* STATS Errors Display / Hide START */
 
-        function displayErrors(errors){
+        function displayErrors(errors) {
             unHideStatsErrors();
-            emptyPrimaryErrors();
-            emptyForeignErrors();
+            clearPrimaryErrors();
+            clearForeignErrors();
 
             displayPrimaryErrors(errors.primary);
             displayForeignErrors(errors.foreign);
@@ -318,20 +296,20 @@
             StatsErrors.removeClass('is-hidden');
         }
 
-        function emptyPrimaryErrors(){
+        function clearPrimaryErrors() {
             PrimaryErrors.text('');
         }
 
-        function emptyForeignErrors(){
+        function clearForeignErrors() {
             ForeignErrors.text('');
         }
 
-        function displayPrimaryErrors(errors){
+        function displayPrimaryErrors(errors) {
             var _noKey = errors['no-key'];
             var _duplicateKey = errors['duplicate-key'];
         }
 
-        function displayForeignErrors(errors){
+        function displayForeignErrors(errors) {
             var _noKey = errors['no-key'];
             var _duplicateKey = errors['duplicate-key'];
             var _naked = errors['naked'];
@@ -527,14 +505,14 @@
             hideErrorMessage();
         }
 
-        function hideStatsDetail(){
-            if( !StatsDetail.hasClass('is-hidden') ){
+        function hideStatsDetail() {
+            if (!StatsDetail.hasClass('is-hidden')) {
                 StatsDetail.addClass('is-hidden');
             }
         }
 
-        function hideStatsErrors(){
-            if( !StatsErrors.hasClass('is-hidden') ){
+        function hideStatsErrors() {
+            if (!StatsErrors.hasClass('is-hidden')) {
                 StatsErrors.addClass('is-hidden');
             }
         }

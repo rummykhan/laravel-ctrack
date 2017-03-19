@@ -4,6 +4,6 @@ Route::group([ 'namespace' => 'RummyKhan\Mongomies\Http\Controllers', 'middlewar
 
     Route::get( config('mongomies.routes.index'),               'HomeController@index');
     Route::get( config('mongomies.routes.relational'),          'RelationalController@index');
-    Route::post( config('mongomies.routes.relational-analysis'), 'RelationalController@startAnalysis');
+    Route::get( config('mongomies.routes.relational-analysis'), 'RelationalController@startAnalysis');
 
 });

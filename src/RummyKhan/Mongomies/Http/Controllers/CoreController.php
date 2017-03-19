@@ -43,7 +43,6 @@ class CoreController extends Controller
     protected function _getWithNoKey($collection, $primaryKey){
         $cursor = DB::collection($collection)
             ->where([$primaryKey => ['$exists' => false]])
-            ->orWhere([ $primaryKey => null ])
             ->get();
         $records = [];
 
